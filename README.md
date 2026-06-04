@@ -49,6 +49,14 @@ Les sorties sont écrites dans `outputs/tables/` :
 
 Ces fichiers ne contiennent pas le texte brut des reports.
 
+Préparer ensuite un corpus local dédupliqué pour le codage phénoménologique :
+
+```bash
+python3 scripts/prepare_coding_corpus.py
+```
+
+Cette commande écrit un fichier de travail dans `data/processed/reports_for_coding.csv`. Ce fichier contient les textes complets et reste donc non versionné. Il sert à lire, annoter et coder les reports localement.
+
 ## Axes d'analyse
 
 1. Audit du corpus : nombre de récits, catégories, substances, longueurs, métadonnées disponibles.
@@ -59,3 +67,6 @@ Ces fichiers ne contiennent pas le texte brut des reports.
 6. Codage qualitatif assisté : annotation d'un échantillon, contrôle inter-codeur si possible.
 7. Article : méthodes, résultats descriptifs, typologie phénoménologique, limites.
 
+## Principe de publication
+
+Le dépôt GitHub doit pouvoir rendre le travail reproductible sans redistribuer les textes. En pratique, le code, les règles de nettoyage, les schémas de codage, les figures agrégées et les tables non reconstructibles peuvent être versionnés ; les reports complets et les fichiers d'annotation contenant des extraits doivent rester locaux sauf permission explicite.

@@ -60,3 +60,18 @@ L'analyse phénoménologique doit partir d'un codebook explicite. Les codes init
 
 Le codebook doit rester révisable après annotation d'un premier échantillon.
 
+## Utilisation directe des reports
+
+L'analyse phénoménologique requiert une lecture directe des textes. Le projet distingue donc trois niveaux :
+
+1. Corpus brut local : le fichier scrappé original, non versionné.
+2. Corpus de codage local : un fichier dédupliqué contenant les textes complets et des identifiants stables, non versionné.
+3. Résultats partageables : tables agrégées, figures, codebook, méthodes et statistiques qui ne republient pas les récits.
+
+Le fichier de codage local peut être généré avec :
+
+```bash
+python3 scripts/prepare_coding_corpus.py
+```
+
+Ce fichier est destiné à l'annotation qualitative, par exemple dans un tableur, un outil CAQDAS, ou des scripts locaux. Les citations courtes destinées à l'article devront être sélectionnées plus tard, en tenant compte des permissions et des limites de citation.
