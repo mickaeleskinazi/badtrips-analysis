@@ -148,7 +148,11 @@ FORENSIC_LEGAL_PATTERNS: dict[str, list[str]] = {
         r"\bspent .* night .* jail\b",
     ],
     "charges_court_probation": [
-        r"\bcharg(ed|es|ing)?\b",
+        r"\bcharged with\b",
+        r"\bcharged for (possession|assault|dui|dwi|theft|burglary|robbery|trespass|vandalism|arson)\b",
+        r"\bcharges? (filed|dropped|pending|against)\b",
+        r"\bfacing charges?\b",
+        r"\bpressed charges?\b",
         r"\bcriminal charge(s)?\b",
         r"\bconvict(ed|ion)?\b",
         r"\bcourt\b",
