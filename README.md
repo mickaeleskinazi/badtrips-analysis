@@ -117,6 +117,15 @@ python3 scripts/extract_forensic_legal_events.py
 La stratégie dédiée au papier médecine légale / psychédéliques est décrite dans `docs/forensic_legal_psychedelics_strategy.md`.
 Les premiers résultats de screening sont synthétisés dans `docs/forensic_legal_initial_results.md`.
 
+Relire localement les reports candidats pour validation :
+
+```bash
+python3 scripts/review_validation_reports.py --report-id exp100200
+```
+
+Le workflow de validation est décrit dans `docs/validation_workflow.md`.
+Les prochaines analyses et figures pour publication sont listées dans `docs/publication_next_steps.md`.
+
 ## Axes d'analyse
 
 1. Audit du corpus : nombre de récits, catégories, substances, longueurs, métadonnées disponibles.
