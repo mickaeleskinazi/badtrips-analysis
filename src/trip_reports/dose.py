@@ -9,7 +9,9 @@ from pathlib import Path
 DOSE_BLOCK_RE = re.compile(r"\bDOSE:\s*(.*?)(?:\bBODY WEIGHT:|\bExp Year:|\bExpID:|$)", re.IGNORECASE | re.DOTALL)
 DOSE_RE = re.compile(
     r"(?P<amount>\d+(?:\.\d+)?)(?:\s*(?:-|to)\s*\d+(?:\.\d+)?)?\s*"
-    r"(?P<unit>micrograms?|mcg|ug|µg|milligrams?|mg|grams?|g|ml|mL|tabs?|hits?|blotters?|pills?|capsules?)\b",
+    r"(?P<unit>micrograms?|mcg|ug|µg|milligrams?|mg|grams?|g|ml|mL|"
+    r"tabs?|hits?|blotters?|buvards?|squares?|papers?|stamps?|"
+    r"drops?|gouttes?|pills?|tablets?|capsules?|caps?)\b",
     re.IGNORECASE,
 )
 
@@ -28,16 +30,32 @@ UNIT_MAP = {
     "g": "g",
     "ml": "ml",
     "mL": "ml",
-    "tab": "count",
-    "tabs": "count",
-    "hit": "count",
-    "hits": "count",
-    "blotter": "count",
-    "blotters": "count",
-    "pill": "count",
-    "pills": "count",
-    "capsule": "count",
-    "capsules": "count",
+    "tab": "blotter",
+    "tabs": "blotter",
+    "hit": "blotter",
+    "hits": "blotter",
+    "blotter": "blotter",
+    "blotters": "blotter",
+    "buvard": "blotter",
+    "buvards": "blotter",
+    "square": "blotter",
+    "squares": "blotter",
+    "paper": "blotter",
+    "papers": "blotter",
+    "stamp": "blotter",
+    "stamps": "blotter",
+    "drop": "drop",
+    "drops": "drop",
+    "goutte": "drop",
+    "gouttes": "drop",
+    "pill": "pill",
+    "pills": "pill",
+    "tablet": "pill",
+    "tablets": "pill",
+    "capsule": "capsule",
+    "capsules": "capsule",
+    "cap": "capsule",
+    "caps": "capsule",
 }
 
 
@@ -84,6 +102,10 @@ def extract_dose_rows(coding_corpus_path: Path, report_codes_path: Path) -> list
                 "dose_max_ug": str(max(by_unit["ug"]) if by_unit["ug"] else ""),
                 "dose_max_g": str(max(by_unit["g"]) if by_unit["g"] else ""),
                 "dose_max_ml": str(max(by_unit["ml"]) if by_unit["ml"] else ""),
+                "dose_max_blotter": str(max(by_unit["blotter"]) if by_unit["blotter"] else ""),
+                "dose_max_drop": str(max(by_unit["drop"]) if by_unit["drop"] else ""),
+                "dose_max_pill": str(max(by_unit["pill"]) if by_unit["pill"] else ""),
+                "dose_max_capsule": str(max(by_unit["capsule"]) if by_unit["capsule"] else ""),
                 "dose_max_count": str(max(by_unit["count"]) if by_unit["count"] else ""),
             }
         )
@@ -130,4 +152,3 @@ def write_dose_outputs(
     write_dose_rows(dose_rows_path, rows)
     write_dose_unit_summary(output_dir / "dose_unit_summary.csv", rows)
     return rows
-

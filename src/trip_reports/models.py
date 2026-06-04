@@ -114,7 +114,17 @@ def prepare_analysis_table(
 
     df = add_target_group_dummies(df)
 
-    for column in ["dose_max_mg", "dose_max_ug", "dose_max_g", "dose_max_ml", "dose_max_count"]:
+    for column in [
+        "dose_max_mg",
+        "dose_max_ug",
+        "dose_max_g",
+        "dose_max_ml",
+        "dose_max_blotter",
+        "dose_max_drop",
+        "dose_max_pill",
+        "dose_max_capsule",
+        "dose_max_count",
+    ]:
         if column in df:
             df[column] = pd.to_numeric(df[column], errors="coerce")
 
@@ -267,10 +277,14 @@ def run_dose_response_screen(df: pd.DataFrame, output_dir: Path) -> pd.DataFrame
     candidates = [
         ("psilocybin_mushrooms", "dose_max_g"),
         ("lsd_lysergamides", "dose_max_ug"),
+        ("lsd_lysergamides", "dose_max_blotter"),
+        ("lsd_lysergamides", "dose_max_drop"),
         ("mdma_entactogens", "dose_max_mg"),
+        ("mdma_entactogens", "dose_max_pill"),
         ("amphetamine_like_stimulants", "dose_max_mg"),
         ("cannabis_natural", "dose_max_g"),
         ("synthetic_cannabinoids", "dose_max_mg"),
+        ("synthetic_cannabinoids", "dose_max_drop"),
         ("dxm", "dose_max_mg"),
         ("ketamine_pcp_arylcyclohexylamines", "dose_max_mg"),
     ]

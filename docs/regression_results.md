@@ -122,17 +122,21 @@ Une extraction préliminaire des doses numériques a été ajoutée. Elle détec
 
 Disponibilité :
 
-- dose numérique détectée : 4 977 reports, 62.13 % ;
+- dose numérique détectée : 5 417 reports, 67.62 % ;
 - mg : 3 101 reports, 38.71 % ;
 - g : 1 121 reports, 13.99 % ;
-- counts/tabs/hits : 998 reports, 12.46 % ;
+- buvard/blotter/tab/hit : 986 reports, 12.31 % ;
+- pill/tablet : 578 reports, 7.22 % ;
 - ug : 132 reports, 1.65 % ;
-- ml : 106 reports, 1.32 %.
+- ml : 106 reports, 1.32 % ;
+- capsule : 62 reports, 0.77 % ;
+- goutte/drop : 33 reports, 0.41 %.
 
 Les modèles dose-réponse actuels sont des screens par groupe/unité et doivent être considérés comme très préliminaires. Après correction de la déduplication, peu de groupes ont assez de doses parsées pour des conclusions robustes.
 
 Signaux exploratoires :
 
+- LSD/lysergamides, dose en buvards/blotters : dose associée à plus d'acceptation/surrender, OR 1.89, p=0.035 ; à valider car l'unité "buvard" ne mesure pas la quantité réelle de LSD.
 - DXM, dose en mg : dose associée à plus d'intervention médicale, OR 1.81, p=0.008.
 - Ketamine/PCP/arylcyclohexylamines, dose en mg : dose associée à plus de peur de mourir, OR 1.61, p=0.008.
 - Psilocybine/champignons, dose en g : signal non significatif pour peur de mourir après contrôle minimal, OR 1.19, p=0.295.
@@ -147,4 +151,3 @@ Avant de faire de la dose-réponse une analyse centrale, il faut :
 3. distinguer dose initiale, dose totale, redosing et dosage approximatif ;
 4. exclure ou recoder les reports multi-substances ;
 5. modéliser séparément les substances où la dose est comparable.
-

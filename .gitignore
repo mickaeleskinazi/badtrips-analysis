@@ -4,6 +4,7 @@ __pycache__/
 .ipynb_checkpoints/
 .venv/
 venv/
+.cache/
 
 # Local corpus files: do not commit scraped Erowid texts.
 data/*.csv
@@ -13,4 +14,3 @@ data/processed/
 # Generated outputs can be regenerated.
 outputs/figures/
 outputs/tables/
-

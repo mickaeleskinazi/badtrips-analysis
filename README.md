@@ -84,6 +84,14 @@ python3 scripts/run_exploratory_models.py
 
 Les résultats régressifs sont synthétisés dans `docs/regression_results.md`.
 
+Générer une carte exploratoire substances x AE-like markers :
+
+```bash
+python3 scripts/generate_ae_maps.py
+```
+
+La synthèse est disponible dans `docs/ae_map_results.md`.
+
 ## Axes d'analyse
 
 1. Audit du corpus : nombre de récits, catégories, substances, longueurs, métadonnées disponibles.
