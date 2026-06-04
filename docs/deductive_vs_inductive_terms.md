@@ -92,11 +92,87 @@ Les termes derives du corpus servent a :
 - enrichir le codebook ;
 - decouvrir des themes oublies ;
 - identifier des faux positifs ;
+- auditer les cohortes construites par mots-cles ;
 - choisir des exemples pour annotation humaine ;
 - nommer les clusters/topic models ;
 - comparer les resultats deductifs et inductifs.
 
 Ils ne remplacent pas l'annotation humaine.
+
+## Boucle de calibration des dictionnaires
+
+Les termes inductifs doivent etre utilises comme outil de controle qualite.
+
+Le principe :
+
+```text
+1. appliquer le dictionnaire a priori
+2. construire les cohortes screen-positive
+3. extraire les termes specifiques de chaque cohorte
+4. reperer les termes incoherents ou inattendus
+5. relire quelques reports sources
+6. corriger le dictionnaire ou ajouter un faux positif connu
+7. regenerer les tables
+```
+
+Un terme inattendu ne signifie pas automatiquement que la categorie est fausse. Il peut indiquer :
+
+- un theme reel non anticipe ;
+- une cooccurrence contextuelle ;
+- une sous-population particuliere ;
+- un faux positif lexical ;
+- un probleme de nettoyage du texte ;
+- un terme ambigu.
+
+## Exemple : `piercing` dans `charges_court_probation`
+
+Lors d'un audit, le terme `piercing` est apparu comme specifique de la cohorte medico-legale `charges_court_probation`.
+
+Interpretation initiale possible mais incorrecte :
+
+> `piercing` serait un terme medico-legal.
+
+Interpretation methodologique correcte :
+
+> `piercing` est surrepresente dans une cohorte construite par screening ; cela peut signaler que la cohorte est contaminee.
+
+La relecture de quelques reports a montre que le probleme venait du patron trop large :
+
+```text
+charg(ed|es|ing)?
+```
+
+Ce patron captait des usages non juridiques :
+
+- `cardiac arrest` pour arrestation ;
+- `charging cord` ;
+- `charged into my extremities` ;
+- `take charge`.
+
+Le dictionnaire a donc ete durci pour chercher un contexte juridique :
+
+```text
+charged with
+charged for possession/assault/dui/etc.
+charges filed/dropped/pending/against
+facing charges
+pressed charges
+criminal charges
+```
+
+Apres correction, `piercing` ne ressortait plus dans cette cohorte, et les termes specifiques etaient plus coherents : `court`, `trial`, `probation`, `conviction`, `lawyer`, `felony`, `dui`, `jail`.
+
+Cet exemple illustre que l'inductif ne sert pas seulement a decouvrir des themes ; il sert aussi a detecter les erreurs du deductif.
+
+## Reporting dans la methode
+
+Dans un article, cette etape peut etre decrite comme :
+
+> We used corpus-derived n-grams as a diagnostic layer to audit the lexical screening dictionaries. Terms overrepresented in each screen-positive cohort were inspected to identify unexpected themes, ambiguous language, boilerplate artifacts, and false-positive lexical rules. When clear false positives were detected, the corresponding dictionary rule was tightened and the pipeline was rerun.
+
+En francais :
+
+> Les n-grams derives du corpus ont ete utilises comme couche diagnostique pour auditer les dictionnaires de screening. Les termes surrepresentes dans chaque cohorte screen-positive ont ete inspectes afin d'identifier themes inattendus, ambiguite lexicale, artefacts de nettoyage et faux positifs. Lorsque des faux positifs nets etaient identifies, la regle correspondante etait durcie, puis le pipeline regenere.
 
 ## Parametres actuels
 

@@ -16,6 +16,8 @@ Le modele adequat doit donc etre une chaine hybride :
 ```text
 corpus deduplique
 -> dictionnaires transparents haute sensibilite
+-> extraction inductive des termes du corpus
+-> audit des faux positifs et calibration des dictionnaires
 -> extraction de snippets
 -> flags contextuels automatiques
 -> annotation humaine
@@ -86,6 +88,24 @@ Cette sortie contient les mots, bigrammes et trigrammes frequents ou specifiques
 - par marqueur medico-legal.
 
 La difference methodologique est detaillee dans `docs/deductive_vs_inductive_terms.md`.
+
+## Niveau 1c : audit inductif des faux positifs
+
+Les termes derives du corpus ne sont pas des labels. Ils indiquent qu'un terme est frequent ou specifique d'une cohorte deja construite.
+
+Ils doivent donc etre lus comme une couche diagnostique :
+
+- terme coherent : renforce l'interpretation de la cohorte ;
+- terme inattendu : peut reveler un theme oublie ;
+- terme incoherent : peut reveler un faux positif ;
+- terme de boilerplate : peut reveler un probleme de nettoyage ;
+- terme ambigu : doit etre relu dans les reports sources.
+
+Exemple :
+
+`piercing` est apparu comme specifique de la cohorte `charges_court_probation`. La relecture a montre que cette cohorte etait contaminee par un patron trop large autour de `charge/charged/charges`, captant des usages non juridiques comme `charging cord`, `charged into my extremities` ou `take charge`. Le patron a ete durci vers des expressions juridiquement contextualisees comme `charged with`, `facing charges` et `criminal charges`, puis les tables ont ete regenerees.
+
+Cette boucle doit etre repetee avant toute interpretation quantitative forte.
 
 ## Niveau 2 : flags contextuels
 
