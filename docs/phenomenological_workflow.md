@@ -6,7 +6,7 @@ L'analyse phénoménologique porte sur les reports complets. Les textes doivent 
 
 ## Fichiers locaux
 
-Le script suivant crée un corpus de codage dédupliqué :
+Le script suivant crée un corpus de codage dédupliqué. Quand un ExpID Erowid est disponible, la déduplication utilise cet ExpID comme clé canonique afin de fusionner les variantes d'URL comme `erowid.org` et `www.erowid.org` :
 
 ```bash
 python3 scripts/prepare_coding_corpus.py
@@ -19,7 +19,7 @@ Sorties :
 
 ## Unité d'analyse
 
-L'unité principale recommandée est le report unique, identifié par `report_id` et `url`. Comme un même report peut apparaître dans plusieurs catégories de substances, les catégories sont regroupées dans un champ multi-valeurs.
+L'unité principale recommandée est le report unique, identifié par `report_id` et une URL source conservée pour référence. Comme un même report peut apparaître dans plusieurs catégories de substances, les catégories sont regroupées dans un champ multi-valeurs.
 
 ## Cycle de codage
 
@@ -51,4 +51,3 @@ Pour l'annotation, on peut ajouter localement des colonnes comme :
 - `include_in_article`
 
 Ces fichiers annotés doivent rester hors Git s'ils contiennent du texte ou des extraits.
-

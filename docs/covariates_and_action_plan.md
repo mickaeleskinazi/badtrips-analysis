@@ -33,16 +33,16 @@ Questions à tester :
 
 ### Co-paramètres explicites
 
-Disponibilité dans le corpus dédupliqué de 15 834 reports :
+Disponibilité dans le corpus dédupliqué de 8 011 reports :
 
 | Champ | Reports | % |
 | --- | ---: | ---: |
-| genre | 15 111 | 95.43 |
-| année d'expérience | 15 042 | 95.00 |
-| année de publication | 15 111 | 95.43 |
-| dose présente | 14 983 | 94.63 |
-| poids corporel présent | 14 336 | 90.54 |
-| âge | 5 365 | 33.88 |
+| genre | 8 000 | 99.86 |
+| année d'expérience | 7 964 | 99.41 |
+| année de publication | 8 000 | 99.86 |
+| dose présente | 7 931 | 99.00 |
+| poids corporel présent | 7 586 | 94.69 |
+| âge | 2 826 | 35.28 |
 
 Utilisation :
 
@@ -75,19 +75,19 @@ Première extraction lexicale :
 
 | Feature | Reports | % |
 | --- | ---: | ---: |
-| voie orale | 11 633 | 73.47 |
-| fumé/vaporisé/inhalé | 7 822 | 49.40 |
-| seul | 6 791 | 42.89 |
-| usager expérimenté | 6 113 | 38.61 |
-| dehors/nature | 6 045 | 38.18 |
-| domicile | 5 335 | 33.69 |
-| première fois | 4 326 | 27.32 |
-| fête/festival/club | 2 594 | 16.38 |
-| insufflation | 2 271 | 14.34 |
-| avec autrui | 2 082 | 13.15 |
-| état préalable négatif | 1 520 | 9.60 |
-| injection | 1 483 | 9.37 |
-| intention thérapeutique | 993 | 6.27 |
+| voie orale | 6 154 | 76.82 |
+| fumé/vaporisé/inhalé | 4 118 | 51.40 |
+| seul | 3 585 | 44.75 |
+| usager expérimenté | 3 205 | 40.01 |
+| dehors/nature | 3 145 | 39.26 |
+| domicile | 2 799 | 34.94 |
+| première fois | 2 278 | 28.44 |
+| fête/festival/club | 1 362 | 17.00 |
+| insufflation | 1 186 | 14.80 |
+| avec autrui | 1 089 | 13.59 |
+| état préalable négatif | 808 | 10.09 |
+| injection | 770 | 9.61 |
+| intention thérapeutique | 513 | 6.40 |
 
 Ces variables sont utiles pour tri et hypothèses, mais demandent validation manuelle car elles peuvent contenir des faux positifs.
 
@@ -267,4 +267,3 @@ But :
 5. Tirer un échantillon stratifié pour codage manuel.
 6. Réviser le codebook avec les exemples lus.
 7. Rédiger une première section résultats exploratoires.
-

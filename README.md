@@ -75,6 +75,15 @@ python3 scripts/extract_covariates.py
 
 Le plan analytique autour de la peur de mourir, du `let go` et des covariables est décrit dans `docs/covariates_and_action_plan.md`.
 
+Extraire les doses numériques préliminaires et lancer les modèles exploratoires :
+
+```bash
+python3 scripts/extract_doses.py
+python3 scripts/run_exploratory_models.py
+```
+
+Les résultats régressifs sont synthétisés dans `docs/regression_results.md`.
+
 ## Axes d'analyse
 
 1. Audit du corpus : nombre de récits, catégories, substances, longueurs, métadonnées disponibles.
