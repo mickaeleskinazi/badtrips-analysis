@@ -27,6 +27,8 @@ L'exhaustivité exige un filet large, mais un filet large produit des faux posit
 
 Le fichier `data/processed/report_serious_events.csv` est local et non versionné. Il contient les codes report-level. Le fichier `data/processed/serious_event_validation_index.csv` donne les IDs/URLs à auditer, sans copier le texte.
 
+Le fichier `data/processed/serious_event_validation_queue.csv` ajoute une file de validation locale avec snippets, patron détecté et colonnes vides pour le codage humain. Ce fichier peut contenir des extraits et ne doit pas être versionné.
+
 ## Commande
 
 ```bash
@@ -43,6 +45,7 @@ Sorties locales non versionnées :
 
 - `data/processed/report_serious_events.csv`
 - `data/processed/serious_event_validation_index.csv`
+- `data/processed/serious_event_validation_queue.csv`
 
 ## Résultats de screening
 
@@ -131,14 +134,22 @@ Le script doit favoriser le rappel initial. Il vaut mieux récupérer trop de ca
 Pour chaque marqueur grave :
 
 1. ouvrir `data/processed/serious_event_validation_index.csv` ;
-2. lire les reports locaux correspondants dans `reports_for_coding.csv` ;
-3. confirmer ou infirmer l'événement ;
-4. coder un niveau de certitude :
+2. ou coder directement `data/processed/serious_event_validation_queue.csv` ;
+3. lire les reports locaux correspondants dans `reports_for_coding.csv` si le snippet ne suffit pas ;
+4. confirmer ou infirmer l'événement ;
+5. coder un niveau de certitude :
    - `confirmed`;
    - `probable`;
    - `mentioned_not_event`;
    - `false_positive`;
    - `unclear`.
+
+Les colonnes de validation proposées sont :
+
+- `event_role` : sujet, tiers, témoin, mention abstraite ;
+- `intentionality` : accidentel, impulsif, volontaire, délirant, unclear ;
+- `severity` : risk_only, injury, life_threatening, death, unclear ;
+- `substance_contribution` : central, contributory, contextual, unrelated, unclear.
 
 ### 4. Chercher les faux négatifs
 
@@ -169,4 +180,3 @@ Une fois les règles stabilisées, versionner :
 - Certaines catégories sont trop sensibles et doivent être durcies après lecture.
 - Les taux ne sont pas épidémiologiques : Erowid surreprésente des récits difficiles et auto-sélectionnés.
 - Les événements graves confirmés nécessitent une lecture humaine.
-

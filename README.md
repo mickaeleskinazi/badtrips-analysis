@@ -106,7 +106,16 @@ Extraire les événements indésirables graves en screening haute sensibilité :
 python3 scripts/extract_serious_events.py
 ```
 
-La stratégie d'exhaustivité et de validation est décrite dans `docs/serious_ae_strategy.md`.
+La stratégie d'exhaustivité et de validation est décrite dans `docs/serious_ae_strategy.md`. Cette commande produit aussi une file de validation locale dans `data/processed/serious_event_validation_queue.csv`.
+
+Lancer le pipeline médico-légal centré sur les psychédéliques :
+
+```bash
+python3 scripts/extract_forensic_legal_events.py
+```
+
+La stratégie dédiée au papier médecine légale / psychédéliques est décrite dans `docs/forensic_legal_psychedelics_strategy.md`.
+Les premiers résultats de screening sont synthétisés dans `docs/forensic_legal_initial_results.md`.
 
 ## Axes d'analyse
 

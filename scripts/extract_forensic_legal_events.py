@@ -9,12 +9,12 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-from trip_reports.serious_events import write_serious_event_outputs  # noqa: E402
+from trip_reports.forensic_legal import write_forensic_outputs  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Extract serious adverse-event-like markers from all reports."
+        description="Extract forensic/legal markers, with psychedelic-related stratification."
     )
     parser.add_argument(
         "--coding-corpus",
@@ -29,29 +29,22 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--out",
         type=Path,
-        default=PROJECT_ROOT / "data" / "processed" / "report_serious_events.csv",
-    )
-    parser.add_argument(
-        "--validation-index",
-        type=Path,
-        default=PROJECT_ROOT / "data" / "processed" / "serious_event_validation_index.csv",
+        default=PROJECT_ROOT / "data" / "processed" / "forensic_legal_rows.csv",
     )
     parser.add_argument(
         "--validation-queue",
         type=Path,
-        default=PROJECT_ROOT / "data" / "processed" / "serious_event_validation_queue.csv",
-        help="Local coder-facing CSV with snippets and empty validation fields.",
-    )
-    parser.add_argument(
-        "--max-validation-per-marker",
-        type=int,
-        default=75,
-        help="Maximum positive-screen reports per marker in the validation queue.",
+        default=PROJECT_ROOT / "data" / "processed" / "forensic_legal_validation_queue.csv",
     )
     parser.add_argument(
         "--tables",
         type=Path,
         default=PROJECT_ROOT / "outputs" / "tables",
+    )
+    parser.add_argument(
+        "--max-validation-per-marker",
+        type=int,
+        default=75,
     )
     return parser.parse_args()
 
@@ -62,20 +55,27 @@ def main() -> None:
         raise SystemExit("Run scripts/prepare_coding_corpus.py first.")
     if not args.report_codes.exists():
         raise SystemExit("Run scripts/analyze_phenomenology.py first.")
-    rows = write_serious_event_outputs(
+    rows = write_forensic_outputs(
         args.coding_corpus,
         args.report_codes,
         args.out,
-        args.validation_index,
+        args.validation_queue,
         args.tables,
-        validation_queue_path=args.validation_queue,
         max_validation_per_marker=args.max_validation_per_marker,
     )
+    psychedelic_related = sum(row.get("psychedelic_related") == "1" for row in rows)
+    forensic_legal = sum(row.get("composite_any_forensic_legal") == "1" for row in rows)
+    psychedelic_forensic_legal = sum(
+        row.get("psychedelic_related") == "1" and row.get("composite_any_forensic_legal") == "1"
+        for row in rows
+    )
     print(f"Reports processed: {len(rows)}")
-    print(f"Local serious event table written to: {args.out}")
-    print(f"Local validation index written to: {args.validation_index}")
+    print(f"Psychedelic-related reports: {psychedelic_related}")
+    print(f"Forensic/legal screen-positive reports: {forensic_legal}")
+    print(f"Psychedelic-related + forensic/legal screen-positive reports: {psychedelic_forensic_legal}")
+    print(f"Local forensic/legal table written to: {args.out}")
     print(f"Local validation queue written to: {args.validation_queue}")
-    print(f"Aggregate serious event tables written to: {args.tables}")
+    print(f"Aggregate forensic/legal tables written to: {args.tables}")
 
 
 if __name__ == "__main__":

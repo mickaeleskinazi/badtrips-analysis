@@ -223,6 +223,13 @@ def iter_rows(path: Path):
 
 def narrative_portion(text: str) -> str:
     """Drop Erowid metadata/footer where category links create many false positives."""
+    text = re.sub(
+        r"Hand-Crafted Glass Molecules!.*?\bCitation:\s*",
+        "Citation: ",
+        text,
+        count=1,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
     parts = re.split(r"\bExp Year:\s*\d{4}\b", text, maxsplit=1, flags=re.IGNORECASE)
     return parts[0]
 
@@ -233,6 +240,35 @@ def detect_serious_events(text: str) -> dict[str, bool]:
         name: any(pattern.search(text) for pattern in patterns)
         for name, patterns in COMPILED_SERIOUS_EVENT_PATTERNS.items()
     }
+
+
+def normalize_space(text: str) -> str:
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def snippet_around(text: str, start: int, end: int, radius: int = 180) -> str:
+    left = max(0, start - radius)
+    right = min(len(text), end + radius)
+    prefix = "..." if left else ""
+    suffix = "..." if right < len(text) else ""
+    return prefix + normalize_space(text[left:right]) + suffix
+
+
+def find_marker_evidence(text: str, marker: str, max_hits: int = 2) -> list[dict[str, str]]:
+    text = narrative_portion(text)
+    evidence: list[dict[str, str]] = []
+    for pattern in COMPILED_SERIOUS_EVENT_PATTERNS[marker]:
+        for match in pattern.finditer(text):
+            evidence.append(
+                {
+                    "matched_text": normalize_space(match.group(0)),
+                    "pattern": pattern.pattern,
+                    "snippet": snippet_around(text, match.start(), match.end()),
+                }
+            )
+            if len(evidence) >= max_hits:
+                return evidence
+    return evidence
 
 
 def add_composites(markers: dict[str, bool]) -> dict[str, bool]:
@@ -348,16 +384,137 @@ def write_validation_index(path: Path, rows: list[dict[str, str]], max_per_marke
                     emitted[marker] += 1
 
 
+def write_validation_queue(
+    path: Path,
+    rows: list[dict[str, str]],
+    coding_corpus_path: Path,
+    report_codes_path: Path,
+    max_per_marker: int = 75,
+    max_negative_controls: int = 200,
+) -> None:
+    """Write a local coder-facing validation queue with snippets, never versioned."""
+    text_rows = {row["report_id"]: row for row in iter_rows(coding_corpus_path)}
+    code_rows = {row["report_id"]: row for row in iter_rows(report_codes_path)}
+    row_by_report = {row["report_id"]: row for row in rows}
+    emitted: Counter[str] = Counter()
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        fieldnames = [
+            "review_set",
+            "serious_event_marker",
+            "report_id",
+            "url",
+            "target_groups",
+            "matched_text",
+            "matched_pattern",
+            "evidence_snippet",
+            "validation_status",
+            "event_role",
+            "intentionality",
+            "severity",
+            "substance_contribution",
+            "notes",
+        ]
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+
+        for marker in marker_names(include_composites=False):
+            for row in rows:
+                if emitted[marker] >= max_per_marker:
+                    break
+                if row.get(marker) != "1":
+                    continue
+                report_id = row.get("report_id", "")
+                text = text_rows.get(report_id, {}).get("text", "")
+                evidence = find_marker_evidence(text, marker, max_hits=1)
+                if not evidence:
+                    continue
+                hit = evidence[0]
+                writer.writerow(
+                    {
+                        "review_set": "positive_screen",
+                        "serious_event_marker": marker,
+                        "report_id": report_id,
+                        "url": row.get("url", ""),
+                        "target_groups": row.get("target_groups", ""),
+                        "matched_text": hit["matched_text"],
+                        "matched_pattern": hit["pattern"],
+                        "evidence_snippet": hit["snippet"],
+                        "validation_status": "",
+                        "event_role": "",
+                        "intentionality": "",
+                        "severity": "",
+                        "substance_contribution": "",
+                        "notes": "",
+                    }
+                )
+                emitted[marker] += 1
+
+        negative_candidates = []
+        for report_id, text_row in text_rows.items():
+            event_row = row_by_report.get(report_id, {})
+            code_row = code_rows.get(report_id, {})
+            if event_row.get("composite_high_confidence_serious_event") == "1":
+                continue
+            marker_score = sum(
+                code_row.get(marker) == "1"
+                for marker in [
+                    "medical_intervention",
+                    "fear_of_death",
+                    "interoceptive_threat",
+                    "loss_of_control",
+                    "paranoia_social_threat",
+                ]
+            )
+            if marker_score == 0:
+                continue
+            negative_candidates.append((marker_score, len(text_row.get("text", "")), report_id))
+
+        negative_candidates.sort(reverse=True)
+        for _, __, report_id in negative_candidates[:max_negative_controls]:
+            text_row = text_rows[report_id]
+            code_row = code_rows.get(report_id, {})
+            writer.writerow(
+                {
+                    "review_set": "negative_control_high_risk",
+                    "serious_event_marker": "none_screened",
+                    "report_id": report_id,
+                    "url": text_row.get("url", ""),
+                    "target_groups": code_row.get("target_groups", ""),
+                    "matched_text": "",
+                    "matched_pattern": "",
+                    "evidence_snippet": snippet_around(narrative_portion(text_row.get("text", "")), 0, 0, radius=260),
+                    "validation_status": "",
+                    "event_role": "",
+                    "intentionality": "",
+                    "severity": "",
+                    "substance_contribution": "",
+                    "notes": "",
+                }
+            )
+
+
 def write_serious_event_outputs(
     coding_corpus_path: Path,
     report_codes_path: Path,
     serious_rows_path: Path,
     validation_index_path: Path,
     output_dir: Path,
+    validation_queue_path: Path | None = None,
+    max_validation_per_marker: int = 75,
 ) -> list[dict[str, str]]:
     rows = extract_serious_event_rows(coding_corpus_path, report_codes_path)
     write_rows(serious_rows_path, rows)
     write_validation_index(validation_index_path, rows)
+    if validation_queue_path is not None:
+        write_validation_queue(
+            validation_queue_path,
+            rows,
+            coding_corpus_path,
+            report_codes_path,
+            max_per_marker=max_validation_per_marker,
+        )
     write_prevalence(output_dir / "serious_event_prevalence.csv", rows)
     write_by_target_group(output_dir / "serious_event_by_target_group.csv", rows)
     write_keyword_inventory(output_dir / "serious_event_keyword_inventory.csv")
