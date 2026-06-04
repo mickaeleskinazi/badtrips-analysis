@@ -65,6 +65,8 @@ python3 scripts/analyze_phenomenology.py
 
 Cette commande écrit `data/processed/report_codes.csv` localement et des tables agrégées dans `outputs/tables/`. Une synthèse interprétative est disponible dans `docs/first_analysis_results.md`.
 
+La stratégie d'agrégation des substances est décrite dans `docs/substance_grouping_strategy.md`.
+
 ## Axes d'analyse
 
 1. Audit du corpus : nombre de récits, catégories, substances, longueurs, métadonnées disponibles.

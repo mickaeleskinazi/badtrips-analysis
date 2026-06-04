@@ -205,6 +205,168 @@ FAMILY_RULES: list[tuple[str, list[str]]] = [
 ]
 
 
+TARGET_GROUP_RULES: list[tuple[str, list[str]]] = [
+    (
+        "psilocybin_mushrooms",
+        ["mushroom", "psilocybin", "psilocin"],
+    ),
+    (
+        "lsd_lysergamides",
+        ["lsd", "1plsd", "1blsd", "allad", "ald52", "lysergamide"],
+    ),
+    (
+        "dmt_ayahuasca_5meo",
+        [
+            "dmt",
+            "5meodmt",
+            "5-meo",
+            "ayahuasca",
+            "huasca",
+            "pharmahuasca",
+            "mimosa",
+            "anadenanthera",
+            "yopo",
+        ],
+    ),
+    (
+        "other_tryptamines",
+        [
+            "tryptamine",
+            "dpt",
+            "dipt",
+            "mipt",
+            "met",
+            "det",
+            "dalt",
+            "4aco",
+            "4-aco",
+            "4ho",
+            "4-ho",
+        ],
+    ),
+    (
+        "mescaline_cacti",
+        ["mescaline", "peyote", "san pedro", "cacti", "pachanoi", "peruvianus"],
+    ),
+    (
+        "phenethylamines_2c_nbome_dox",
+        [
+            "phenethylamine",
+            "2c",
+            "2ci",
+            "2ce",
+            "2cb",
+            "2ct",
+            "nbome",
+            "25i",
+            "25c",
+            "25b",
+            "dob",
+            "doc",
+            "doi",
+            "dox",
+        ],
+    ),
+    (
+        "mdma_entactogens",
+        ["mdma", "mda", "mdea", "mdai", "methylone", "6apb", "bk-mdma", "empathogen"],
+    ),
+    (
+        "amphetamine_like_stimulants",
+        [
+            "amphetamine",
+            "methamphetamine",
+            "methylphenidate",
+            "ritalin",
+            "adderall",
+            "cathinone",
+            "mephedrone",
+            "methylmethcathinone",
+            "mdpv",
+            "bath salts",
+        ],
+    ),
+    (
+        "cocaine_crack",
+        ["cocaine", "crack"],
+    ),
+    (
+        "cannabis_natural",
+        ["cannabis", "marijuana", "hash", "high thc", "high cbd"],
+    ),
+    (
+        "synthetic_cannabinoids",
+        [
+            "cannabinoid receptor agonist",
+            "novel cannabinoid",
+            "spice",
+            "k2",
+            "jwh",
+            "am2201",
+            "smoking blends",
+        ],
+    ),
+    (
+        "ketamine_pcp_arylcyclohexylamines",
+        [
+            "ketamine",
+            "pcp",
+            "arylcyclohexylamine",
+            "methoxetamine",
+            "mxe",
+            "3meopcp",
+            "deschloroketamine",
+        ],
+    ),
+    (
+        "dxm",
+        ["dxm"],
+    ),
+    (
+        "salvia",
+        ["salvia", "salvinorin"],
+    ),
+    (
+        "deliriants_anticholinergics",
+        [
+            "datura",
+            "tropane",
+            "diphenhydramine",
+            "dimenhydrinate",
+            "benadryl",
+            "brugmansia",
+            "belladonna",
+            "nutmeg",
+        ],
+    ),
+    (
+        "benzodiazepines_zdrugs_sedatives",
+        [
+            "benzodiazepine",
+            "alprazolam",
+            "diazepam",
+            "clonazepam",
+            "lorazepam",
+            "etizolam",
+            "zolpidem",
+            "ambien",
+            "phenibut",
+            "ghb",
+            "gbl",
+            "butanediol",
+        ],
+    ),
+    (
+        "opioids",
+        ["opioid", "opiate", "heroin", "morphine", "oxycodone", "hydrocodone", "fentanyl", "tramadol", "kratom"],
+    ),
+    (
+        "alcohol",
+        ["alcohol", "beer", "wine", "liquor"],
+    ),
+]
+
+
 MARKER_PATTERNS: dict[str, list[str]] = {
     "interoceptive_threat": [
         r"\bheart (attack|rate|beating|pounding|racing)\b",
@@ -357,6 +519,7 @@ class ReportCodes:
     report_id: str
     primary_family: str
     families: tuple[str, ...]
+    target_groups: tuple[str, ...]
     markers: dict[str, bool]
 
 
@@ -381,6 +544,17 @@ def classify_families(substance_categories: str) -> tuple[str, ...]:
     return tuple(families)
 
 
+def classify_target_groups(substance_categories: str) -> tuple[str, ...]:
+    text = substance_categories.lower()
+    groups: list[str] = []
+    for group, needles in TARGET_GROUP_RULES:
+        if any(needle in text for needle in needles):
+            groups.append(group)
+    if not groups:
+        groups.append("other_or_unclassified")
+    return tuple(groups)
+
+
 def detect_markers(text: str) -> dict[str, bool]:
     return {
         name: any(pattern.search(text) for pattern in patterns)
@@ -397,12 +571,14 @@ def code_reports(path: Path) -> list[ReportCodes]:
     coded: list[ReportCodes] = []
     for row in iter_coding_rows(path):
         families = classify_families(row.get("substance_categories", ""))
+        target_groups = classify_target_groups(row.get("substance_categories", ""))
         markers = detect_markers(row.get("text", "") or "")
         coded.append(
             ReportCodes(
                 report_id=row.get("report_id", ""),
                 primary_family=families[0],
                 families=families,
+                target_groups=target_groups,
                 markers=markers,
             )
         )
@@ -414,13 +590,14 @@ def write_report_codes(path: Path, coded: list[ReportCodes]) -> None:
     marker_names = list(MARKER_PATTERNS)
     with path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle)
-        writer.writerow(["report_id", "primary_family", "families", *marker_names])
+        writer.writerow(["report_id", "primary_family", "families", "target_groups", *marker_names])
         for report in coded:
             writer.writerow(
                 [
                     report.report_id,
                     report.primary_family,
                     " | ".join(report.families),
+                    " | ".join(report.target_groups),
                     *(int(report.markers[name]) for name in marker_names),
                 ]
             )
@@ -452,6 +629,36 @@ def write_family_counts(path: Path, coded: list[ReportCodes]) -> None:
         for family in report.families:
             counts[family] += 1
     write_counter(path, "substance_family", counts, len(coded))
+
+
+def write_target_group_counts(path: Path, coded: list[ReportCodes]) -> None:
+    counts = Counter()
+    for report in coded:
+        for group in report.target_groups:
+            counts[group] += 1
+    write_counter(path, "target_group", counts, len(coded))
+
+
+def write_marker_by_target_group(path: Path, coded: list[ReportCodes]) -> None:
+    group_totals: Counter[str] = Counter()
+    marker_counts: defaultdict[str, Counter[str]] = defaultdict(Counter)
+
+    for report in coded:
+        for group in report.target_groups:
+            group_totals[group] += 1
+            for marker, present in report.markers.items():
+                if present:
+                    marker_counts[group][marker] += 1
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(["target_group", "marker", "group_n", "marker_n", "pct_within_group"])
+        for group, group_n in group_totals.most_common():
+            for marker in MARKER_PATTERNS:
+                marker_n = marker_counts[group][marker]
+                pct = marker_n / group_n * 100 if group_n else 0
+                writer.writerow([group, marker, group_n, marker_n, f"{pct:.2f}"])
 
 
 def write_marker_by_family(path: Path, coded: list[ReportCodes]) -> None:
@@ -497,7 +704,9 @@ def write_analysis_outputs(coding_path: Path, report_codes_path: Path, output_di
     coded = code_reports(coding_path)
     write_report_codes(report_codes_path, coded)
     write_family_counts(output_dir / "substance_family_counts.csv", coded)
+    write_target_group_counts(output_dir / "target_group_counts.csv", coded)
     write_marker_prevalence(output_dir / "phenomenology_marker_prevalence.csv", coded)
     write_marker_by_family(output_dir / "phenomenology_marker_by_family.csv", coded)
+    write_marker_by_target_group(output_dir / "phenomenology_marker_by_target_group.csv", coded)
     write_marker_cooccurrence(output_dir / "phenomenology_marker_cooccurrence.csv", coded)
     return coded

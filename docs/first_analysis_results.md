@@ -35,7 +35,25 @@ Les reports peuvent appartenir à plusieurs familles si plusieurs catégories de
 | Acceptation / surrender | 2 117 | 13.37 |
 | Peur de devenir fou | 1 819 | 11.49 |
 
-## Résultats par familles
+## Résultats par groupes ciblés
+
+Une seconde agrégation plus proche des molécules permet de réduire les redondances et d'obtenir des profils plus interprétables.
+
+| Groupe ciblé | Reports | Menace interoceptive | Peur de mourir | Acceptation / surrender | Intégration positive |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Psilocybine / champignons | 1 028 | 73.74 | 57.20 | 24.42 | 55.06 |
+| LSD / lysergamides | 780 | 62.82 | 57.18 | 27.44 | 48.97 |
+| MDMA / entactogènes | 1 083 | 61.03 | 41.92 | 16.25 | 37.77 |
+| Amphétamine-like stimulants | 864 | 60.30 | 39.12 | 10.65 | 27.43 |
+| Cannabis naturel | 756 | 80.03 | 55.29 | 21.30 | 40.21 |
+| Cannabinoïdes synthétiques | 432 | 88.89 | 65.74 | 11.57 | 34.72 |
+| Ketamine/PCP/arylcyclohexylamines | 584 | 64.90 | 50.68 | 17.81 | 34.42 |
+| DXM | 456 | 74.34 | 49.34 | 8.77 | 36.18 |
+| Salvia | 488 | 60.25 | 42.21 | 22.95 | 40.78 |
+
+Cette table suggère que l'axe substance reste utile. Les cannabinoïdes synthétiques et le cannabis naturel sont très marqués par l'interoception et la peur de mourir. Les groupes psilocybine/champignons et LSD/lysergamides montrent aussi une peur de mourir élevée, mais avec davantage de marqueurs d'acceptation et d'intégration. Les amphétamine-like stimulants ont un profil moins intégratif et plus proche d'une menace corporelle ou médicale.
+
+## Résultats par grandes familles
 
 ### Cannabis et cannabinoïdes
 
@@ -108,4 +126,3 @@ La première analyse soutient trois intuitions fortes :
 - Les reports multi-substances compliquent l'attribution causale.
 - Les pourcentages ne doivent pas être interprétés comme des taux épidémiologiques.
 - Le prochain niveau doit être un codage manuel stratifié par familles de substances.
-
