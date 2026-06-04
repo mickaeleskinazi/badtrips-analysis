@@ -28,6 +28,42 @@ data/processed/forensic_legal_validation_queue.csv
 
 Ces deux fichiers sont locaux et non versionnés car ils contiennent des snippets.
 
+## Fichier humain enrichi
+
+Pour préparer une relecture plus facile, lancer :
+
+```bash
+python3 scripts/build_human_review_files.py
+```
+
+Cela crée :
+
+```text
+data/processed/human_review/forensic_legal_human_review.csv
+data/processed/human_review/serious_event_human_review.csv
+data/processed/human_review/combined_human_review.csv
+outputs/human_review/human_review_workbook.xlsx
+outputs/tables/human_review_context_summary.csv
+```
+
+Le fichier combiné peut être ouvert dans Excel, Numbers, LibreOffice ou Google Sheets.
+
+Le classeur généré reste local, car il contient des snippets.
+
+Colonnes utiles :
+
+- `auto_review_priority` : `high`, `medium`, `low` ;
+- `auto_context_guess` : hypothèse automatique sur le statut du passage ;
+- `auto_actor_guess` : sujet probable, autorité/secours, ami/tiers, unclear ;
+- `auto_is_feared_or_belief` : peur, croyance, hallucination ou conviction ;
+- `auto_is_hypothetical` : conditionnel, possibilité, intention ou idéation ;
+- `auto_is_negated` : négation proche du mot-clé ;
+- `auto_is_analogy` : comparaison ou métaphore ;
+- `auto_is_marker_specific_false_positive` : faux positif lexical connu, par exemple `cardiac arrest` pour arrestation juridique ;
+- `auto_local_window` : fenêtre courte autour du mot-clé.
+
+Ces colonnes ne remplacent pas le codage humain. Elles servent à trier les lignes, repérer les faux positifs et prioriser la lecture.
+
 ## Relire un report précis
 
 Exemple :

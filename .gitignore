@@ -14,3 +14,4 @@ data/processed/
 # Generated outputs can be regenerated.
 outputs/figures/
 outputs/tables/
+outputs/human_review/

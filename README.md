@@ -123,6 +123,14 @@ Relire localement les reports candidats pour validation :
 python3 scripts/review_validation_reports.py --report-id exp100200
 ```
 
+Construire les fichiers de relecture humaine enrichis par indices contextuels :
+
+```bash
+python3 scripts/build_human_review_files.py
+```
+
+Cela écrit les CSV locaux dans `data/processed/human_review/`.
+
 Le workflow de validation est décrit dans `docs/validation_workflow.md`.
 Les prochaines analyses et figures pour publication sont listées dans `docs/publication_next_steps.md`.
 
