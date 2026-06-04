@@ -140,7 +140,14 @@ Exporter l'inventaire transparent des mots-clés, règles et faux positifs connu
 python3 scripts/export_keyword_inventory.py
 ```
 
+Extraire les termes qui émergent directement du corpus :
+
+```bash
+python3 scripts/extract_corpus_derived_terms.py
+```
+
 Le protocole de modélisation est décrit dans `docs/modeling_and_transparency_protocol.md`. La taxonomie phénoménologique étendue est dans `docs/expanded_phenomenological_taxonomy.md`.
+La différence entre dictionnaire a priori et termes dérivés du corpus est expliquée dans `docs/deductive_vs_inductive_terms.md`.
 
 ## Axes d'analyse
 

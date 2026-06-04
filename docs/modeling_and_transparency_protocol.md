@@ -61,6 +61,32 @@ Ce fichier contient :
 - flags contextuels ;
 - faux positifs connus.
 
+## Niveau 1b : termes derives du corpus
+
+Le dictionnaire a priori doit etre compare a une extraction inductive depuis les reports eux-memes.
+
+Commande :
+
+```bash
+python3 scripts/extract_corpus_derived_terms.py
+```
+
+Sortie :
+
+```text
+outputs/tables/corpus_derived_terms.csv
+```
+
+Cette sortie contient les mots, bigrammes et trigrammes frequents ou specifiques :
+
+- dans le corpus total ;
+- par groupe de substance ;
+- par marqueur phenomenologique ;
+- par marqueur adverse event ;
+- par marqueur medico-legal.
+
+La difference methodologique est detaillee dans `docs/deductive_vs_inductive_terms.md`.
+
 ## Niveau 2 : flags contextuels
 
 Les flags contextuels ne sont pas un modele final. Ils servent a prioriser la relecture.
