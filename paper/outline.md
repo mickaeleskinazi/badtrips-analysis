@@ -28,3 +28,14 @@ Cet article examine un corpus de récits d'expériences difficiles publiés sur 
 - Identifier ce qui varie ou non selon les substances.
 - Clarifier les limites d'une analyse fondée sur des récits publics auto-sélectionnés.
 
+## Hypothèse directrice
+
+Les bad trips peuvent être analysés comme des crises de stabilisation du corps, du soi et du monde. Les substances moduleraient la porte d'entrée de la crise, mais la peur de mourir, la perte de contrôle et l'interoception menaçante pourraient constituer un noyau phénoménologique transversal.
+
+## Analyses prioritaires
+
+1. Profils phénoménologiques par substances ou familles de substances.
+2. Analyse spécifique des reports mentionnant la peur de mourir.
+3. Analyse des signaux interoceptifs et de leur interprétation catastrophique.
+4. Analyse des mécanismes de dépassement : acceptation, surrender, aide sociale, recontextualisation, intervention médicale.
+5. Comparaison future avec Reddit si le cadre éthique et l'accès aux données sont clarifiés.
