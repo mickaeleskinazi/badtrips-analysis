@@ -67,6 +67,14 @@ Cette commande écrit `data/processed/report_codes.csv` localement et des tables
 
 La stratégie d'agrégation des substances est décrite dans `docs/substance_grouping_strategy.md`.
 
+Extraire les co-paramètres disponibles pour les analyses :
+
+```bash
+python3 scripts/extract_covariates.py
+```
+
+Le plan analytique autour de la peur de mourir, du `let go` et des covariables est décrit dans `docs/covariates_and_action_plan.md`.
+
 ## Axes d'analyse
 
 1. Audit du corpus : nombre de récits, catégories, substances, longueurs, métadonnées disponibles.
