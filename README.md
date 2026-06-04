@@ -100,6 +100,14 @@ python3 scripts/plot_dose_response.py
 
 La partie phénoménologique est cadrée dans `docs/phenomenological_framework.md`.
 
+Extraire les événements indésirables graves en screening haute sensibilité :
+
+```bash
+python3 scripts/extract_serious_events.py
+```
+
+La stratégie d'exhaustivité et de validation est décrite dans `docs/serious_ae_strategy.md`.
+
 ## Axes d'analyse
 
 1. Audit du corpus : nombre de récits, catégories, substances, longueurs, métadonnées disponibles.
