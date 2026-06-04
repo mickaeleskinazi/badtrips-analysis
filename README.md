@@ -92,6 +92,14 @@ python3 scripts/generate_ae_maps.py
 
 La synthèse est disponible dans `docs/ae_map_results.md`.
 
+Générer les graphes dose-réponse exploratoires :
+
+```bash
+python3 scripts/plot_dose_response.py
+```
+
+La partie phénoménologique est cadrée dans `docs/phenomenological_framework.md`.
+
 ## Axes d'analyse
 
 1. Audit du corpus : nombre de récits, catégories, substances, longueurs, métadonnées disponibles.

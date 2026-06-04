@@ -142,6 +142,16 @@ Signaux exploratoires :
 - Psilocybine/champignons, dose en g : signal non significatif pour peur de mourir après contrôle minimal, OR 1.19, p=0.295.
 - MDMA/entactogènes, dose en mg : pas de signal clair dans ce screen.
 
+Un script produit aussi des graphes dose-réponse locaux :
+
+```bash
+python3 scripts/plot_dose_response.py
+```
+
+Sortie :
+
+- `outputs/figures/dose_response_panels.png`
+
 ## Prochaine étape
 
 Avant de faire de la dose-réponse une analyse centrale, il faut :

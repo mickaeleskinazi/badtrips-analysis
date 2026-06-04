@@ -360,3 +360,116 @@ def run_all_models(
     dose_table = run_dose_response_screen(df, output_dir)
     tables["dose_response_screen"] = dose_table
     return tables
+
+
+def dose_plot_specs() -> list[tuple[str, str, str, str]]:
+    return [
+        ("psilocybin_mushrooms", "dose_max_g", "fear_of_death", "Psilocybin mushrooms: death fear"),
+        ("psilocybin_mushrooms", "dose_max_g", "medical_intervention", "Psilocybin mushrooms: medical intervention"),
+        ("lsd_lysergamides", "dose_max_blotter", "acceptance_surrender", "LSD/lysergamides blotters: let go"),
+        ("lsd_lysergamides", "dose_max_blotter", "fear_of_death", "LSD/lysergamides blotters: death fear"),
+        ("mdma_entactogens", "dose_max_mg", "medical_intervention", "MDMA/entactogens mg: medical intervention"),
+        ("amphetamine_like_stimulants", "dose_max_mg", "fear_of_death", "Amphetamine-like mg: death fear"),
+        ("dxm", "dose_max_mg", "medical_intervention", "DXM mg: medical intervention"),
+        ("ketamine_pcp_arylcyclohexylamines", "dose_max_mg", "fear_of_death", "Ketamine/PCP mg: death fear"),
+    ]
+
+
+def binned_prevalence(
+    df: pd.DataFrame,
+    dose_column: str,
+    outcome: str,
+    bins: int = 5,
+) -> pd.DataFrame:
+    plot_df = df[[dose_column, outcome]].dropna().copy()
+    plot_df = plot_df[(plot_df[dose_column] > 0) & (plot_df[dose_column] <= plot_df[dose_column].quantile(0.99))]
+    if len(plot_df) < 50 or plot_df[dose_column].nunique() < 4:
+        return pd.DataFrame()
+
+    quantile_bins = min(bins, plot_df[dose_column].nunique())
+    plot_df["bin"] = pd.qcut(plot_df[dose_column], q=quantile_bins, duplicates="drop")
+    grouped = plot_df.groupby("bin", observed=True).agg(
+        dose_mid=(dose_column, "median"),
+        outcome_rate=(outcome, "mean"),
+        n=(outcome, "size"),
+    )
+    grouped["outcome_pct"] = grouped["outcome_rate"] * 100
+    return grouped.reset_index(drop=True)
+
+
+def logistic_curve(df: pd.DataFrame, dose_column: str, outcome: str) -> tuple[np.ndarray, np.ndarray] | None:
+    model_df = df[[dose_column, outcome, "word_count", "multi_target_group"]].dropna().copy()
+    model_df = model_df[(model_df[dose_column] > 0) & (model_df[dose_column] <= model_df[dose_column].quantile(0.99))]
+    if len(model_df) < 80 or model_df[outcome].nunique() < 2:
+        return None
+
+    model_df["log_dose"] = np.log1p(model_df[dose_column])
+    model_df["log_word_count"] = np.log1p(model_df["word_count"].fillna(model_df["word_count"].median()))
+    predictors = ["log_dose", "log_word_count", "multi_target_group"]
+    x = sm.add_constant(model_df[predictors].astype(float), has_constant="add")
+    y = model_df[outcome].astype(float)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        result = sm.GLM(y, x, family=sm.families.Binomial()).fit(maxiter=200)
+
+    dose_grid = np.linspace(model_df[dose_column].quantile(0.05), model_df[dose_column].quantile(0.95), 80)
+    pred = pd.DataFrame(
+        {
+            "const": 1.0,
+            "log_dose": np.log1p(dose_grid),
+            "log_word_count": model_df["log_word_count"].median(),
+            "multi_target_group": model_df["multi_target_group"].median(),
+        }
+    )
+    return dose_grid, result.predict(pred) * 100
+
+
+def plot_dose_response_panels(analysis_table_path: Path, output_path: Path) -> int:
+    import matplotlib.pyplot as plt
+
+    df = pd.read_csv(analysis_table_path)
+    specs = dose_plot_specs()
+    panels: list[tuple[str, pd.DataFrame, tuple[np.ndarray, np.ndarray] | None, str]] = []
+
+    for group, dose_column, outcome, title in specs:
+        group_column = f"group__{group}"
+        if group_column not in df or dose_column not in df:
+            continue
+        sub = df[df[group_column] == 1].copy()
+        binned = binned_prevalence(sub, dose_column, outcome)
+        if binned.empty:
+            continue
+        panels.append((dose_column, binned, logistic_curve(sub, dose_column, outcome), title))
+
+    if not panels:
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_text("No dose-response panels had enough data.\n", encoding="utf-8")
+        return 0
+
+    cols = 2
+    rows = int(np.ceil(len(panels) / cols))
+    fig, axes = plt.subplots(rows, cols, figsize=(12, max(4, rows * 3.7)))
+    axes_array = np.atleast_1d(axes).flatten()
+
+    for ax, (dose_column, binned, curve, title) in zip(axes_array, panels):
+        sizes = 30 + binned["n"] * 0.8
+        ax.scatter(binned["dose_mid"], binned["outcome_pct"], s=sizes, alpha=0.75)
+        if curve is not None:
+            ax.plot(curve[0], curve[1], linewidth=2)
+        ax.set_title(title)
+        ax.set_xlabel(dose_column.replace("dose_max_", "dose: "))
+        ax.set_ylabel("% reports")
+        ax.set_ylim(0, 100)
+        if binned["dose_mid"].max() / max(binned["dose_mid"].min(), 1e-9) > 20:
+            ax.set_xscale("log")
+        ax.grid(alpha=0.25)
+
+    for ax in axes_array[len(panels) :]:
+        ax.axis("off")
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.suptitle("Exploratory dose-response panels: binned prevalence plus adjusted logistic curve", y=1.01)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=200, bbox_inches="tight")
+    plt.close(fig)
+    return len(panels)
