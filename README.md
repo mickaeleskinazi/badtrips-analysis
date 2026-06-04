@@ -134,6 +134,14 @@ Cela écrit les CSV locaux dans `data/processed/human_review/`.
 Le workflow de validation est décrit dans `docs/validation_workflow.md`.
 Les prochaines analyses et figures pour publication sont listées dans `docs/publication_next_steps.md`.
 
+Exporter l'inventaire transparent des mots-clés, règles et faux positifs connus :
+
+```bash
+python3 scripts/export_keyword_inventory.py
+```
+
+Le protocole de modélisation est décrit dans `docs/modeling_and_transparency_protocol.md`. La taxonomie phénoménologique étendue est dans `docs/expanded_phenomenological_taxonomy.md`.
+
 ## Axes d'analyse
 
 1. Audit du corpus : nombre de récits, catégories, substances, longueurs, métadonnées disponibles.

@@ -2,6 +2,14 @@
 
 Ce codebook est une première grille de travail. Il doit être testé sur un échantillon de reports, puis révisé.
 
+Une version opérationnelle étendue, destinée à l'annotation humaine et aux futurs modèles supervisés, est disponible dans `docs/expanded_phenomenological_taxonomy.md`.
+
+Les mots-clés transparents associés à la taxonomie sont exportables avec :
+
+```bash
+python3 scripts/export_keyword_inventory.py
+```
+
 ## Affects et tonalité
 
 - `anxiety_panic` : anxiété aiguë, panique, terreur.
@@ -45,4 +53,3 @@ Ce codebook est une première grille de travail. Il doit être testé sur un éc
 - `resolution` : descente ou résolution.
 - `aftermath_negative` : effets négatifs durables.
 - `aftermath_integrative` : apprentissage, intégration, relecture positive.
-
