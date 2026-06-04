@@ -57,6 +57,14 @@ python3 scripts/prepare_coding_corpus.py
 
 Cette commande écrit un fichier de travail dans `data/processed/reports_for_coding.csv`. Ce fichier contient les textes complets et reste donc non versionné. Il sert à lire, annoter et coder les reports localement.
 
+Lancer une première analyse automatique des marqueurs phénoménologiques :
+
+```bash
+python3 scripts/analyze_phenomenology.py
+```
+
+Cette commande écrit `data/processed/report_codes.csv` localement et des tables agrégées dans `outputs/tables/`. Une synthèse interprétative est disponible dans `docs/first_analysis_results.md`.
+
 ## Axes d'analyse
 
 1. Audit du corpus : nombre de récits, catégories, substances, longueurs, métadonnées disponibles.
