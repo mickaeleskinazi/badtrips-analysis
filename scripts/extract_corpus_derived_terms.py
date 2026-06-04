@@ -226,14 +226,29 @@ BOILERPLATE = {
     "canvas",
     "donate",
     "donation",
+    "details",
+    "elucido",
+    "front",
+    "gift",
     "giclee",
     "glass",
     "hand-crafted",
+    "hoodie",
+    "logo",
+    "ltd",
     "molecules",
+    "pockets",
     "print",
+    "receive",
     "signed",
+    "solve",
     "stretched",
     "support",
+    "reverberating",
+    "shopping",
+    "bag",
+    "tote",
+    "yours",
 }
 
 TOKEN_RE = re.compile(r"[a-z][a-z0-9\-']{2,}")
@@ -250,6 +265,7 @@ def split_groups(value: str) -> list[str]:
 
 def clean_text(text: str) -> str:
     text = narrative_portion(text)
+    text = re.sub(r"\[\s*erowid note:.*?\]", " ", text, flags=re.IGNORECASE | re.DOTALL)
     text = re.sub(r"\bCitation:.*?\bDOSE:\s*", " ", text, count=1, flags=re.IGNORECASE | re.DOTALL)
     return normalize_space(text.lower())
 

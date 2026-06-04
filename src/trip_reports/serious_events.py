@@ -9,14 +9,11 @@ from pathlib import Path
 SERIOUS_EVENT_PATTERNS: dict[str, list[str]] = {
     "defenestration_jump_fall_height": [
         r"\bjump(ed|ing)? (out of|from) (a|the|my)? ?window\b",
-        r"\bjump(ed|ing)? (off|from) (a|the)? ?(balcony|roof|bridge|building)\b",
+        r"\bjump(ed|ing)? (off|from|out of|over) (a|the|my)? ?(balcony|roof|bridge|building)\b",
         r"\bfall(en|ing)? (out of|from) (a|the|my)? ?window\b",
         r"\bfell (out of|from) (a|the|my)? ?window\b",
+        r"\bfell (off|from|out of|over) (a|the|my)? ?(balcony|roof|bridge|building)\b",
         r"\bdefenestrat",
-        r"\bjump(ed|ing)? .* balcony\b",
-        r"\bfell .* balcony\b",
-        r"\bjump(ed|ing)? .* rooftop\b",
-        r"\bfell .* rooftop\b",
         r"\bjumped from a height\b",
     ],
     "traffic_driving_accident": [
@@ -37,7 +34,11 @@ SERIOUS_EVENT_PATTERNS: dict[str, list[str]] = {
         r"\bcops?\b",
         r"\bsheriff\b",
         r"\blaw enforcement\b",
-        r"\barrest(ed)?\b",
+        r"\barrested\b",
+        r"\barrested by\b",
+        r"\barrested for\b",
+        r"\bunder arrest\b",
+        r"\bresist(ed|ing)? arrest\b",
         r"\bhandcuff",
         r"\bjail\b",
         r"\bprison\b",
@@ -132,8 +133,12 @@ SERIOUS_EVENT_PATTERNS: dict[str, list[str]] = {
         r"\bfight(ing)? with\b",
         r"\bgot into a fight\b",
         r"\bpunched\b",
-        r"\bkicked\b",
-        r"\bstab(bed|bing)?\b",
+        r"\bkicked (me|him|her|them|someone|a person|my friend|my mother|my father|my girlfriend|my boyfriend)\b",
+        r"\bwas kicked\b",
+        r"\bkicked in the\b",
+        r"\bstabbed\b",
+        r"\bstabbed (me|him|her|them|someone|a person|my friend)\b",
+        r"\bstabbing (him|her|them|someone|a person|my friend)\b",
         r"\bwith a knife\b",
         r"\bpulled a knife\b",
         r"\bwith a gun\b",
@@ -164,8 +169,8 @@ SERIOUS_EVENT_PATTERNS: dict[str, list[str]] = {
     ],
     "death_fatality_reported": [
         r"\bdead on arrival\b",
-        r"\bfatal\b",
-        r"\bfatality\b",
+        r"\bfatal (overdose|reaction|accident|dose|intoxication|poisoning)\b",
+        r"\bfatalit(y|ies)\b",
         r"\bdeath certificate\b",
         r"\bpronounced dead\b",
         r"\b(friend|person|someone|he|she|they) died\b",
@@ -223,6 +228,12 @@ def iter_rows(path: Path):
 
 def narrative_portion(text: str) -> str:
     """Drop Erowid metadata/footer where category links create many false positives."""
+    text = re.sub(
+        r"\[\s*erowid note:.*?\]",
+        " ",
+        text,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
     text = re.sub(
         r"Hand-Crafted Glass Molecules!.*?\bCitation:\s*",
         "Citation: ",

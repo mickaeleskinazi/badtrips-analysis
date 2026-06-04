@@ -60,6 +60,8 @@ Ce fichier est inductif : on part du langage des reports, puis on regarde ce qui
 - `background_doc_pct` : pourcentage hors cohorte contenant le terme.
 - `specificity_log_odds` : score de specificite du terme pour la cohorte.
 
+Important : `all_reports` n'est pas une cohorte phenomenologique ou clinique a interpreter. C'est le vocabulaire de fond de tous les reports dedupliques. Il sert a identifier les mots banals du corpus, a calculer la specificite des autres cohortes, et a reperer les artefacts d'extraction ou de boilerplate. Les interpretations doivent donc porter sur les cohortes specifiques, pas sur `all_reports`.
+
 ## Comment utiliser ces fichiers ensemble ?
 
 La logique methodologique est :
